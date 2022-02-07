@@ -85,3 +85,10 @@ Disassembly of section .text:
 [ 	]+[0-9a-f]+:[ 	]+R_RISCV_GOT_GPREL_LO12_I[ 	]+foo
 [ 	]+[0-9a-f]+:[ 	]+0005c507[ 	]+flq[ 	]+fa0,0\(a1\)
 [ 	]+[0-9a-f]+:[ 	]+R_RISCV_GOT_GPREL_LO12_I[ 	]+foo
+[ 	]+[0-9a-f]+:[ 	]+00000537[ 	]+lui[ 	]+a0,0x0
+[ 	]+[0-9a-f]+:[ 	]+R_RISCV_PLT_GPREL_HI20[ 	]+foo
+[ 	]+[0-9a-f]+:[ 	]+00a18533[ 	]+add[ 	]+a0,gp,a0
+[ 	]+[0-9a-f]+:[ 	]+R_RISCV_PLT_GPREL_ADD[ 	]+foo
+[ 	]+[0-9a-f]+:[ 	]+00050513[ 	]+addi[ 	]+a0,a0,0 # 0x0
+[ 	]+[0-9a-f]+:[ 	]+R_RISCV_PLT_GPREL_LO12_I[ 	]+foo
+
