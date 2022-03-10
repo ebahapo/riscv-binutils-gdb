@@ -961,6 +961,7 @@ riscv_elf_check_relocs (bfd *abfd, struct bfd_link_info *info,
 	case R_RISCV_GOT_GPREL_HI20:
 	case R_RISCV_TLS_GD_GPREL_HI20:
 	case R_RISCV_TLS_GOT_GPREL_HI20:
+	case R_RISCV_PLT_GPREL_HI20:
 	  htab->compact_relocs = true;
 	  break;
 	default:
@@ -1010,6 +1011,7 @@ riscv_elf_check_relocs (bfd *abfd, struct bfd_link_info *info,
 	  break;
 
 	case R_RISCV_PCREL_HI20:
+	case R_RISCV_PLT_GPREL_HI20:
 	  if (h != NULL
 	      && h->type == STT_GNU_IFUNC)
 	    {
@@ -1907,6 +1909,7 @@ perform_relocation (const reloc_howto_type *howto,
     case R_RISCV_TLS_GOT_GPREL_HI20:
     case R_RISCV_TLS_GD_HI20:
     case R_RISCV_TLS_GD_GPREL_HI20:
+    case R_RISCV_PLT_GPREL_HI20:
       if (ARCH_SIZE > 32 && !VALID_UTYPE_IMM (RISCV_CONST_HIGH_PART (value)))
 	return bfd_reloc_overflow;
       value = ENCODE_UTYPE_IMM (RISCV_CONST_HIGH_PART (value));
@@ -1921,6 +1924,7 @@ perform_relocation (const reloc_howto_type *howto,
     case R_RISCV_GOT_GPREL_LO12_I:
     case R_RISCV_TLS_GOT_GPREL_LO12_I:
     case R_RISCV_TLS_GD_GPREL_LO12_I:
+    case R_RISCV_PLT_GPREL_LO12_I:
       value = ENCODE_ITYPE_IMM (value);
       break;
 
@@ -2691,6 +2695,7 @@ riscv_elf_relocate_section (bfd *output_bfd,
 	case R_RISCV_TPREL_ADD:
 	case R_RISCV_TLS_GD_GPREL_ADD:
 	case R_RISCV_TLS_GOT_GPREL_ADD:
+	case R_RISCV_PLT_GPREL_ADD:
 	case R_RISCV_COPY:
 	case R_RISCV_JUMP_SLOT:
 	case R_RISCV_RELATIVE:
@@ -2910,6 +2915,17 @@ riscv_elf_relocate_section (bfd *output_bfd,
 	    {
 	      /* Refer to the PLT entry.  */
 	      relocation = sec_addr (htab->elf.splt) + h->plt.offset;
+	      unresolved_reloc = false;
+	    }
+	  break;
+
+	case R_RISCV_PLT_GPREL_HI20:
+	case R_RISCV_PLT_GPREL_LO12_I:
+	  if (h != NULL && h->plt.offset != MINUS_ONE)
+	    {
+	      /* Refer to the PLT entry.  */
+	      relocation = sec_addr (htab->elf.splt) + h->plt.offset;
+	      relocation -= gp;
 	      unresolved_reloc = false;
 	    }
 	  break;
@@ -4837,6 +4853,7 @@ _bfd_riscv_relax_lui (bfd *abfd,
 	  return true;
 
 	case R_RISCV_GOT_GPREL_LO12_I:
+	case R_RISCV_PLT_GPREL_LO12_I:
 	  {
 	    /* Change the RS1 to GP.  */
 	    bfd_vma insn = bfd_get_32 (abfd, contents + rel->r_offset);
@@ -4859,6 +4876,8 @@ _bfd_riscv_relax_lui (bfd *abfd,
 	case R_RISCV_GPREL_ADD:
 	case R_RISCV_GOT_GPREL_HI20:
 	case R_RISCV_GOT_GPREL_ADD:
+	case R_RISCV_PLT_GPREL_HI20:
+	case R_RISCV_PLT_GPREL_ADD:
 	  /* We can delete the unnecessary LUI and reloc.  */
 	  rel->r_info = ELFNN_R_INFO (0, R_RISCV_NONE);
 	  *again = true;
@@ -5411,6 +5430,11 @@ _bfd_riscv_relax_section (bfd *abfd, asection *sec,
 	      relax_func = _bfd_riscv_relax_lui;
 	      compact_got = true;
 	    }
+	  else if (!bfd_link_pic(info)
+		   && (type == R_RISCV_PLT_GPREL_HI20
+		       || type == R_RISCV_PLT_GPREL_ADD
+		       || type == R_RISCV_PLT_GPREL_LO12_I))
+	      relax_func = _bfd_riscv_relax_lui;
 	  else
 	    continue;
 	}

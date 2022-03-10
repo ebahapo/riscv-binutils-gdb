@@ -44,3 +44,7 @@ lwu	a0, %got_gprel_lo(foo)(a0)
 flw	fa0, %got_gprel_lo(foo)(a1)
 fld	fa0, %got_gprel_lo(foo)(a1)
 flq	fa0, %got_gprel_lo(foo)(a1)
+# PLT GPREL
+lui	a0, %plt_gprel_hi(foo)
+add	a0, gp, a0, %plt_gprel(foo)	# Relaxation purpose
+addi	a0, a0, %plt_gprel_lo(foo)

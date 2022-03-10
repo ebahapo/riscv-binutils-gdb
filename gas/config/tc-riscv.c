@@ -2287,6 +2287,7 @@ static const struct percent_op_match percent_op_utype[] =
   {"%got_gprel_hi", BFD_RELOC_RISCV_GOT_GPREL_HI20},
   {"%tls_ie_gprel_hi", BFD_RELOC_RISCV_TLS_GOT_GPREL_HI20},
   {"%tls_gd_gprel_hi", BFD_RELOC_RISCV_TLS_GD_GPREL_HI20},
+  {"%plt_gprel_hi", BFD_RELOC_RISCV_PLT_GPREL_HI20},
   {0, 0}
 };
 
@@ -2299,6 +2300,7 @@ static const struct percent_op_match percent_op_itype[] =
   {"%got_gprel_lo", BFD_RELOC_RISCV_GOT_GPREL_LO12_I},
   {"%tls_ie_gprel_lo", BFD_RELOC_RISCV_TLS_GOT_GPREL_LO12_I},
   {"%tls_gd_gprel_lo", BFD_RELOC_RISCV_TLS_GD_GPREL_LO12_I},
+  {"%plt_gprel_lo", BFD_RELOC_RISCV_PLT_GPREL_LO12_I},
   {0, 0}
 };
 
@@ -2318,6 +2320,7 @@ static const struct percent_op_match percent_op_relax_rtype[] =
   {"%got_gprel", BFD_RELOC_RISCV_GOT_GPREL_ADD},
   {"%tls_ie_gprel", BFD_RELOC_RISCV_TLS_GOT_GPREL_ADD},
   {"%tls_gd_gprel", BFD_RELOC_RISCV_TLS_GD_GPREL_ADD},
+  {"%plt_gprel", BFD_RELOC_RISCV_PLT_GPREL_ADD},
   {0, 0}
 };
 
